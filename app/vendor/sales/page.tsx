@@ -1,5 +1,15 @@
 import { redirect } from "next/navigation"
-// Sales is a view of orders — redirect to analytics for now
-export default function VendorSalesPage() {
+
+export default async function VendorSalesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string }>
+}) {
+  const { demo } = await searchParams
+  
+  if (demo === "true") {
+    redirect("/vendor/orders?demo=true")
+  }
+  
   redirect("/vendor/orders")
 }

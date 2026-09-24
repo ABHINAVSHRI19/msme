@@ -5,7 +5,53 @@ import { VendorAnalyticsClient } from "./VendorAnalyticsClient"
 
 export const metadata = { title: "Analytics — MicroMatch Vendor" }
 
-export default async function VendorAnalyticsPage() {
+export default async function VendorAnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string }>
+}) {
+  const { demo } = await searchParams
+  const isDemo = demo === "true"
+
+  if (isDemo) {
+    const chartData = Array.from({ length: 30 }).map((_, i) => {
+      const d = new Date()
+      d.setDate(d.getDate() - (29 - i))
+      return {
+        date: d.toLocaleDateString("en-IN", { month: "short", day: "numeric" }),
+        revenue: Math.floor(Math.random() * 8000 + 1000),
+        orders: Math.floor(Math.random() * 15 + 1),
+        referralRevenue: Math.floor(Math.random() * 4000 + 500),
+      }
+    })
+
+    const creatorLeaderboard = [
+      { id: "1", name: "Rahul Sharma", niche: "Tech", total: 45000, orders: 12 },
+      { id: "2", name: "Priya Patel", niche: "Lifestyle", total: 38000, orders: 9 },
+      { id: "3", name: "Amit Kumar", niche: "Gaming", total: 29000, orders: 7 },
+    ]
+
+    const productLeaderboard = [
+      { id: "1", name: "Wireless Earbuds", price: 2999, total: 65000, orders: 22 },
+      { id: "2", name: "Smart Watch", price: 4999, total: 45000, orders: 9 },
+      { id: "3", name: "Power Bank", price: 1499, total: 32000, orders: 21 },
+    ]
+
+    return (
+      <DashboardLayout role="vendor" userName="Demo Vendor">
+        <VendorAnalyticsClient
+          chartData={chartData}
+          creatorLeaderboard={creatorLeaderboard}
+          productLeaderboard={productLeaderboard}
+          totalRevenue={142000}
+          totalCommissions={5800}
+          totalOrders={52}
+          referralRate={65}
+        />
+      </DashboardLayout>
+    )
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")

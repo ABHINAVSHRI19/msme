@@ -25,10 +25,11 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
+  const { pathname, searchParams } = request.nextUrl
+  const isDemo = searchParams.get('demo') === 'true'
 
   // Protected creator routes
-  if (pathname.startsWith('/creator')) {
+  if (pathname.startsWith('/creator') && !isDemo) {
     if (!user) {
       return NextResponse.redirect(new URL('/login?redirect=' + pathname, request.url))
     }
@@ -44,7 +45,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Protected vendor routes
-  if (pathname.startsWith('/vendor')) {
+  if (pathname.startsWith('/vendor') && !isDemo) {
     if (!user) {
       return NextResponse.redirect(new URL('/login?redirect=' + pathname, request.url))
     }

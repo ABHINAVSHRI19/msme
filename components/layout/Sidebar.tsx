@@ -48,15 +48,21 @@ interface SidebarProps {
   userEmail?: string
 }
 
+import { useSearchParams } from "next/navigation"
+
 function NavItems({ items, pathname }: { items: typeof CREATOR_NAV; pathname: string }) {
+  const searchParams = useSearchParams()
+  const isDemo = searchParams.get("demo") === "true"
+
   return (
     <div className="space-y-0.5">
       {items.map(item => {
         const isActive = pathname === item.href || (item.href !== "/creator" && item.href !== "/vendor" && pathname.startsWith(item.href))
+        const targetHref = isDemo ? `${item.href}?demo=true` : item.href
         return (
           <Link
             key={item.href}
-            href={item.href}
+            href={targetHref}
             className={cn(
               "sidebar-item",
               isActive && "active"
